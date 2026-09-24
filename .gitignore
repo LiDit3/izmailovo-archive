@@ -16,3 +16,23 @@ Thumbs.db
 
 # Файлы сессий
 /sessions/
+
+# Секреты и конфиги
+.env
+.env.*
+!.env.example
+config/*.php
+*.key
+*.pem
+
+# Зависимости
+vendor/
+node_modules/
+composer.phar
+
+# IDE и ОС
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
