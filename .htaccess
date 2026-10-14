@@ -1,0 +1,25 @@
+RewriteEngine On
+RewriteBase /
+
+# 1. ЯВНО УКАЗЫВАЕМ КАСТОМНУЮ СТРАНИЦУ 404
+ErrorDocument 404 /404.php
+
+# 2. БЛОКИРОВКА ОПАСНЫХ СИМВОЛОВ (сразу отдаём 404, не нагружая PHP)
+RewriteCond %{REQUEST_URI} (;|<|>|'|"|\)|\(|%0A|%0D|%22|%27|%3C|%3E|%00).* [NC]
+RewriteRule ^ - [R=404,L]
+
+# 3. ВНЕШНИЙ РЕДИРЕКТ: убираем .php из URL (для SEO и чистоты)
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /([^\ ]+)\.php
+RewriteRule ^/?(.*)\.php$ /$1/ [R=301,L]
+
+# 4. ВНУТРЕННЯЯ ПЕРЕАДРЕСАЦИЯ: ТОЛЬКО если реальный .php файл существует!
+# Это защищает от попыток открыть несуществующие скрипты
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{DOCUMENT_ROOT}/$1.php -f
+RewriteRule ^([a-zA-Z0-9_\-]+)/?$ $1.php [L]
+
+# 5. CATCH-ALL (СТРАХОВКА): Если дошли сюда, значит файла и папки точно нет.
+# Принудительно отдаём 404.php для любого другого запроса
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
